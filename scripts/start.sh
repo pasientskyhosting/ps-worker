@@ -82,11 +82,22 @@ while read job; do
     job=$(echo $job | perl -pe 's/\\/\\\\/g' )
 
     if [ "x$job" != "x" ]; then
-        echo "exec $job" > /dev/stdout
+        echo "[program:worker$i]
+        command=$job
+        autostart=true
+        autorestart=true
+        priority=0
+        stdout_events_enabled=true
+        stderr_events_enabled=true
+        stdout_logfile=/dev/stdout
+        stdout_logfile_maxbytes=0
+        stderr_logfile=/dev/stderr
+        stderr_logfile_maxbytes=0
+
+        " >>  /etc/supervisord.conf
         let i=i+1
     fi
 done <<< "$workers"
-
 
 # Start supervisord and services
 /usr/bin/supervisord -n -c /etc/supervisord.conf
