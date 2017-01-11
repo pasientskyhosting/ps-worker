@@ -66,6 +66,32 @@ EOF
 fi
 
 # Create workers in supervisord
+workers=$(sudo -u nobody php app/console melin:systemeventlistener:launch -e worker)
+workers="$workers
+$(sudo -u nobody php app/console melin:eventhandler:launch -e worker)
+$(sudo -u nobody php app/console melin:systemevents:launch -e worker)"
+
+i=1
+while read job; do
+    job=$(echo $job | perl -pe 's/\\/\\\\/g' )
+
+    if [ "x$job" != "x" ]; then
+    echo "description \"Melin Worker - ${site_id}\"
+start on (filesystem and net-device-up eth0)
+stop on runlevel [!2345]
+respawn limit 1 5
+respawn
+post-stop exec sleep 2
+setuid nobody
+chdir $CHECKOUT
+exec $job | logger -t melin-worker-${site_id}-$i" > /etc/init/melin-worker-${site_id}-$i.conf
+service melin-worker-${site_id}-$i start
+
+let i=i+1
+
+fi
+done <<< "$workers"
+
 
 # Start supervisord and services
 /usr/bin/supervisord -n -c /etc/supervisord.conf
