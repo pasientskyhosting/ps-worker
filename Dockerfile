@@ -20,8 +20,7 @@ RUN echo "deb http://download.mono-project.com/repo/debian wheezy main" > /etc/a
   && echo "deb http://download.mono-project.com/repo/debian wheezy-apache24-compat main" | tee -a /etc/apt/sources.list.d/mono-xamarin.list \
   && echo "deb http://download.mono-project.com/repo/debian wheezy-libjpeg62-compat main" | tee -a /etc/apt/sources.list.d/mono-xamarin.list \
   && apt-get update \
-  && apt-get install -y binutils mono-complete ca-certificates-mono fsharp \
-  && rm -rf /var/lib/apt/lists/* /tmp/*
+  && apt-get install -y binutils mono-complete ca-certificates-mono fsharp
 
 RUN wget -O /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg && \
     echo "deb https://packages.sury.org/php/ jessie main" > /etc/apt/sources.list.d/php.list
@@ -53,7 +52,7 @@ RUN apt-get update \
     openssh-client \
     git \
     && apt-get clean \
-    && rm -r /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/* /tmp/*
 
 RUN [ -n "${NEW_RELIC_LICENSE_KEY}" ] && apt-get install -y -q --no-install-recommends newrelic-php5 newrelic-sysmond && apt-get clean && rm -r /var/lib/apt/lists/* || exit 0
 
