@@ -62,6 +62,7 @@ stdout_logfile=/dev/stdout
 stdout_logfile_maxbytes=0
 stderr_logfile=/dev/stderr
 stderr_logfile_maxbytes=0
+
 EOF
 fi
 
@@ -89,7 +90,22 @@ while read job; do
     job=$(echo $job | perl -pe 's/\\/\\\\/g' )
 
     if [ "x$job" != "x" ]; then
-        echo -e "[program:worker$i]\ncommand=$job\nautostart=true\nautorestart=true\npriority=0\nstdout_events_enabled=true\nstderr_events_enabled=true\nstdout_logfile=/dev/stdout\nstdout_logfile_maxbytes=0\nstderr_logfile=/dev/stderr\nstderr_logfile_maxbytes=0\n\n" >>  /etc/supervisord.conf
+
+cat >> /etc/supervisord.conf < EOF
+[program:worker$i]
+command=$job
+autostart=true
+autorestart=true
+priority=0
+stdout_events_enabled=true
+stderr_events_enabled=true
+stdout_logfile=/dev/stdout
+stdout_logfile_maxbytes=0
+stderr_logfile=/dev/stderr
+stderr_logfile_maxbytes=0
+
+EOF
+
         let i=i+1
     fi
 done <<< "$workers"
