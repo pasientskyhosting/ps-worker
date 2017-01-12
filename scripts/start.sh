@@ -50,20 +50,7 @@ chown -Rf worker.worker /data
 
 # Add new relic if key is present
 if [ -n "$NEW_RELIC_LICENSE_KEY" ]; then
-cat >> /etc/supervisord.conf < EOF
-[program:nrsysmond]
-command=nrsysmond -c /etc/newrelic/nrsysmond.cfg -l /dev/stdout -f
-autostart=true
-autorestart=true
-priority=0
-stdout_events_enabled=true
-stderr_events_enabled=true
-stdout_logfile=/dev/stdout
-stdout_logfile_maxbytes=0
-stderr_logfile=/dev/stderr
-stderr_logfile_maxbytes=0
-
-EOF
+    echo -e "[program:nrsysmond]\ncommand=nrsysmond -c /etc/newrelic/nrsysmond.cfg -l /dev/stdout -f\nautostart=true\nautorestart=true\npriority=0\nstdout_events_enabled=true\nstderr_events_enabled=true\nstdout_logfile=/dev/stdout\nstdout_logfile_maxbytes=0\nstderr_logfile=/dev/stderr\nstderr_logfile_maxbytes=0\n" >> /etc/supervisord.conf
 fi
 
 # Create workers in supervisord
@@ -90,22 +77,7 @@ while read job; do
     job=$(echo $job | perl -pe 's/\\/\\\\/g' )
 
     if [ "x$job" != "x" ]; then
-
-cat >> /etc/supervisord.conf < EOF
-[program:worker$i]
-command=$job
-autostart=true
-autorestart=true
-priority=0
-stdout_events_enabled=true
-stderr_events_enabled=true
-stdout_logfile=/dev/stdout
-stdout_logfile_maxbytes=0
-stderr_logfile=/dev/stderr
-stderr_logfile_maxbytes=0
-
-EOF
-
+        echo -e "[program:worker$i]\ncommand=$job\nautostart=true\nautorestart=true\npriority=0\nstdout_events_enabled=true\nstderr_events_enabled=true\nstdout_logfile=/dev/stdout\nstdout_logfile_maxbytes=0\nstderr_logfile=/dev/stderr\nstderr_logfile_maxbytes=0\n" >> /etc/supervisord.conf
         let i=i+1
     fi
 done <<< "$workers"
