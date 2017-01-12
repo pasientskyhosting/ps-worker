@@ -60,7 +60,7 @@ RUN mkdir -p /var/log/supervisor
 
 ADD conf/supervisord.conf /etc/supervisord.conf
 
-RUN useradd -ms /bin/bash worker
+#RUN useradd -ms /bin/bash worker
 
 # tweak php and php-cli config
 RUN sed -i \

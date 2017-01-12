@@ -41,12 +41,12 @@ if [ ! -d "/data/.git" ]; then
        git clone https://${GIT_USERNAME}:${GIT_PERSONAL_TOKEN}@${GIT_REPO} /data || exit 1
      fi
    fi
-   chown -Rf worker.worker /data
+   #chown -Rf worker.worker /data
  fi
 fi
 
 # Always chown webroot for better mounting
-chown -Rf worker.worker /data
+#chown -Rf worker.worker /data
 
 # Add new relic if key is present
 if [ -n "$NEW_RELIC_LICENSE_KEY" ]; then
