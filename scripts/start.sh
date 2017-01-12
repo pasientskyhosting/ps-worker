@@ -67,6 +67,7 @@ fi
 
 # Create workers in supervisord
 cd /data
+workers=""
 if [ -f boot ];
 then
     workers=$(/bin/bash ./boot)
@@ -75,6 +76,12 @@ else
     workers="$workers
     $(php app/console melin:eventhandler:launch -e worker)
     $(php app/console melin:systemevents:launch -e worker)"
+fi
+
+if [ "$workers" == "" ];
+then
+    echo "No workers to launch. Quitting"
+    exit 1
 fi
 
 i=1
