@@ -4,6 +4,7 @@ MAINTAINER Andreas Krüger <ak@patientsky.com>
 
 ENV php_conf /etc/php/7.1/cli/php.ini
 ENV DEBIAN_FRONTEND noninteractive
+ENV composer_hash 55d6ead61b29c7bdee5cccfb50076874187bd9f21f65d8991d46ec5cc90518f447387fb9f76ebae1fbbacf329e583e30
 
 RUN apt-get update \
     && apt-get install -y -q --no-install-recommends \
@@ -95,5 +96,10 @@ RUN [ -n "${NEW_RELIC_LICENSE_KEY}" ] && nrsysmond-config --set license_key=${NE
 # Add Scripts
 ADD scripts/start.sh /start.sh
 RUN chmod 755 /start.sh
+
+RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && \
+    php -r "if (hash_file('SHA384', 'composer-setup.php') === '${composer_hash}') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;" && \
+    php composer-setup.php --install-dir=/usr/bin --filename=composer && \
+    php -r "unlink('composer-setup.php');"
 
 CMD ["/start.sh"]
