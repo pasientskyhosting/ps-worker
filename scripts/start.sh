@@ -30,7 +30,7 @@ if [ ! -d "/data/.git" ]; then
    rm -Rf /data/*
    if [ ! -z "$GIT_BRANCH" ]; then
      if [ -z "$GIT_USERNAME" ] && [ -z "$GIT_PERSONAL_TOKEN" ]; then
-       git clone -b $GIT_BRANCH $GIT_REPO /data/ || exit 1
+       git clone -b $GIT_BRANCH $GIT_REPO /data || exit 1
      else
        git clone -b ${GIT_BRANCH} https://${GIT_USERNAME}:${GIT_PERSONAL_TOKEN}@${GIT_REPO} /data || exit 1
      fi
@@ -47,6 +47,13 @@ fi
 
 # Always chown webroot for better mounting
 #chown -Rf worker.worker /data
+
+# Composer
+if [ -f /var/www/html/composer.json ];
+then
+    cd /var/www/html
+    /usr/bin/composer install --no-interaction --no-dev --optimize-autoloader
+fi
 
 # Add new relic if key is present
 if [ -n "$NEW_RELIC_LICENSE_KEY" ]; then
@@ -81,6 +88,27 @@ while read job; do
         let i=i+1
     fi
 done <<< "$workers"
+
+if [ -f /data/WorkerBoot ]; then
+    while read line; do
+      job=`echo $line | awk '{ $1=""; print $0}'`
+
+      if [ "x$job" != "x" ]; then
+          echo -e "[program:worker$i]\ncommand=$job\nautostart=true\nautorestart=true\npriority=0\nstdout_events_enabled=true\nstderr_events_enabled=true\nstdout_logfile=/dev/stdout\nstdout_logfile_maxbytes=0\nstderr_logfile=/dev/stderr\nstderr_logfile_maxbytes=0\n" >> /etc/supervisord.conf
+          let i=i+1
+      fi
+    done < /data/WorkerBoot
+fi
+
+build_id=0
+if [ -f /data/build_version ];
+then
+    build_id=$(cat /data/build_version)
+fi
+cd /data
+php app/console newrelic:notify-deployment --revision="$build_id" -e prod
+php app/console melin:clientmessaging:newdeployment -e prod
+php app/console melin:cloudinary:upload -e prod
 
 # Start supervisord and services
 /usr/bin/supervisord -n -c /etc/supervisord.conf
