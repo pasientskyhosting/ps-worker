@@ -57,7 +57,14 @@ fi
 
 # Add new relic if key is present
 if [ -n "$NEW_RELIC_LICENSE_KEY" ]; then
-    echo -e "[program:nrsysmond]\ncommand=nrsysmond -c /etc/newrelic/nrsysmond.cfg -l /dev/stdout -f\nautostart=true\nautorestart=true\npriority=0\nstdout_events_enabled=true\nstderr_events_enabled=true\nstdout_logfile=/dev/stdout\nstdout_logfile_maxbytes=0\nstderr_logfile=/dev/stderr\nstderr_logfile_maxbytes=0\n" >> /etc/supervisord.conf
+
+fi
+
+# Add new relic if key is present
+if [ ! -z "$NEW_RELIC_LICENSE_KEY" ]; then
+    newrelic-install install || exit 1
+    nrsysmond-config --set license_key=${NEW_RELIC_LICENSE_KEY} || exit 1
+    echo -e "\n[program:nrsysmond]\ncommand=nrsysmond -c /etc/newrelic/nrsysmond.cfg -l /dev/stdout -f\nautostart=true\nautorestart=true\npriority=0\nstdout_events_enabled=true\nstderr_events_enabled=true\nstdout_logfile=/dev/stdout\nstdout_logfile_maxbytes=0\nstderr_logfile=/dev/stderr\nstderr_logfile_maxbytes=0" >> /etc/supervisord.conf
 fi
 
 # Create workers in supervisord
@@ -84,7 +91,7 @@ while read job; do
     job=$(echo $job | perl -pe 's/\\/\\\\/g' )
 
     if [ "x$job" != "x" ]; then
-        echo -e "[program:worker$i]\ncommand=$job\nautostart=true\nautorestart=true\npriority=0\nstdout_events_enabled=true\nstderr_events_enabled=true\nstdout_logfile=/dev/stdout\nstdout_logfile_maxbytes=0\nstderr_logfile=/dev/stderr\nstderr_logfile_maxbytes=0\n" >> /etc/supervisord.conf
+        echo -e "\n[program:worker$i]\ncommand=$job\nautostart=true\nautorestart=true\npriority=0\nstdout_events_enabled=true\nstderr_events_enabled=true\nstdout_logfile=/dev/stdout\nstdout_logfile_maxbytes=0\nstderr_logfile=/dev/stderr\nstderr_logfile_maxbytes=0" >> /etc/supervisord.conf
         let i=i+1
     fi
 done <<< "$workers"
@@ -94,7 +101,7 @@ if [ -f /data/WorkerBoot ]; then
       job=`echo $line | awk '{ $1=""; print $0}' | sed -e 's/^[[:space:]]*//'`
 
       if [ "x$job" != "x" ]; then
-          echo -e "[program:worker$i]\ncommand=$job\nautostart=true\nautorestart=true\npriority=0\nstdout_events_enabled=true\nstderr_events_enabled=true\nstdout_logfile=/dev/stdout\nstdout_logfile_maxbytes=0\nstderr_logfile=/dev/stderr\nstderr_logfile_maxbytes=0\n" >> /etc/supervisord.conf
+          echo -e "\n[program:worker$i]\ncommand=$job\nautostart=true\nautorestart=true\npriority=0\nstdout_events_enabled=true\nstderr_events_enabled=true\nstdout_logfile=/dev/stdout\nstdout_logfile_maxbytes=0\nstderr_logfile=/dev/stderr\nstderr_logfile_maxbytes=0" >> /etc/supervisord.conf
           let i=i+1
       fi
     done < /data/WorkerBoot
