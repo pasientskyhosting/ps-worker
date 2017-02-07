@@ -91,7 +91,7 @@ done <<< "$workers"
 
 if [ -f /data/WorkerBoot ]; then
     while read line; do
-      job=`echo $line | awk '{ $1=""; print $0}'`
+      job=`echo $line | awk '{ $1=""; print $0}' | sed -e 's/^[[:space:]]*//'`
 
       if [ "x$job" != "x" ]; then
           echo -e "[program:worker$i]\ncommand=$job\nautostart=true\nautorestart=true\npriority=0\nstdout_events_enabled=true\nstderr_events_enabled=true\nstdout_logfile=/dev/stdout\nstdout_logfile_maxbytes=0\nstderr_logfile=/dev/stderr\nstderr_logfile_maxbytes=0\n" >> /etc/supervisord.conf
