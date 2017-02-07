@@ -49,9 +49,9 @@ fi
 #chown -Rf worker.worker /data
 
 # Composer
-if [ -f /var/www/html/composer.json ];
+if [ -f /data/composer.json ];
 then
-    cd /var/www/html
+    cd /data
     /usr/bin/composer install --no-interaction --no-dev --optimize-autoloader
 fi
 
