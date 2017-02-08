@@ -82,7 +82,7 @@ monolog:
     handlers:
         main:
             type: stream
-            path:  "/dev/stdout"
+            path:  "/dev/stderr"
             level: error
 EOF
 fi
@@ -94,7 +94,7 @@ monolog:
     handlers:
         main:
             type: stream
-            path:  "/dev/stdout"
+            path:  "/dev/stderr"
             level: error
 EOF
 fi
@@ -111,10 +111,10 @@ if [ -f boot ];
 then
     workers=$(/bin/bash ./boot)
 else
-    workers=$(php app/console melin:systemeventlistener:launch -e worker)
+    workers=$(php app/console melin:systemeventlistener:launch -e worker | grep -v "PHP Warning")
     workers="$workers
-    $(php app/console melin:eventhandler:launch -e worker)
-    $(php app/console melin:systemevents:launch -e worker)"
+    $(php app/console melin:eventhandler:launch -e worker | grep -v "PHP Warning")
+    $(php app/console melin:systemevents:launch -e worker | grep -v "PHP Warning")"
 fi
 
 if [ "$workers" == "" ] && [ ! -f /data/WorkerBoot ];
