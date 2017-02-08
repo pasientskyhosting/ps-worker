@@ -86,6 +86,19 @@ monolog:
             level: error
 EOF
 fi
+if [ -f /data/app/config/config_worker.yml ]; then
+cat > /data/app/config/config_worker.yml <<EOF
+imports:
+    - { resource: config_prod.yml }
+monolog:
+    handlers:
+        main:
+            type: stream
+            path:  "/dev/stdout"
+            level: error
+EOF
+fi
+
 
     cd /data
     /usr/bin/composer install --no-interaction --no-dev --optimize-autoloader
