@@ -20,9 +20,9 @@ fi
 # Set custom webroot
 if [ ! -z "$WEBROOT" ]; then
     webroot=$WEBROOT
-    sed -i "s#root /var/www/html/web;#root ${webroot};#g" /etc/nginx/sites-available/default.conf
+    sed -i "s#root /data/web;#root ${webroot};#g" /etc/nginx/sites-available/default.conf
 else
-    webroot=/var/www/html
+    webroot=/data
 fi
 
 # Set custom server name
@@ -41,22 +41,22 @@ if [ ! -z "$GIT_NAME" ]; then
 fi
 
 # Dont pull code down if the .git folder exists
-if [ ! -d "/var/www/html/.git" ]; then
+if [ ! -d "/data/.git" ]; then
     # Pull down code from git for our site!
     if [ ! -z "$GIT_REPO" ]; then
         # Remove the test index file
-        rm -Rf /var/www/html/*
+        rm -Rf /data/*
         if [ ! -z "$GIT_BRANCH" ]; then
             if [ -z "$GIT_USERNAME" ] && [ -z "$GIT_PERSONAL_TOKEN" ]; then
-                git clone -b $GIT_BRANCH $GIT_REPO /var/www/html/ || exit 1
+                git clone -b $GIT_BRANCH $GIT_REPO /data/ || exit 1
             else
-                git clone -b ${GIT_BRANCH} https://${GIT_USERNAME}:${GIT_PERSONAL_TOKEN}@${GIT_REPO} /var/www/html || exit 1
+                git clone -b ${GIT_BRANCH} https://${GIT_USERNAME}:${GIT_PERSONAL_TOKEN}@${GIT_REPO} /data || exit 1
             fi
         else
             if [ -z "$GIT_USERNAME" ] && [ -z "$GIT_PERSONAL_TOKEN" ]; then
-                git clone $GIT_REPO /var/www/html/ || exit 1
+                git clone $GIT_REPO /data/ || exit 1
             else
-                git clone https://${GIT_USERNAME}:${GIT_PERSONAL_TOKEN}@${GIT_REPO} /var/www/html || exit 1
+                git clone https://${GIT_USERNAME}:${GIT_PERSONAL_TOKEN}@${GIT_REPO} /data || exit 1
             fi
         fi
     fi
