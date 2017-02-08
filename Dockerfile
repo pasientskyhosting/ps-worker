@@ -68,7 +68,7 @@ RUN sed -i \
         -e "s/upload_max_filesize\s*=\s*2M/upload_max_filesize = 100M/g" \
         -e "s/post_max_size\s*=\s*8M/post_max_size = 100M/g" \
         -e "s/variables_order = \"GPCS\"/variables_order = \"EGPCS\"/g" \
-        -e "s/;error_log\s*=\s*syslog/error_log = \/dev\/stderr/g" \
+        -e "s/;error_log\s*=\s*syslog/error_log = \/dev\/stdout/g" \
         -e "s/memory_limit\s*=\s*128M/memory_limit = 3072M/g" \
         -e "s/;date.timezone\s*=/date.timezone = Europe\/Oslo/g" \
         -e "s/max_execution_time\s*=\s*30/max_execution_time = 300/g" \
