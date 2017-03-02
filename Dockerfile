@@ -21,7 +21,7 @@ RUN echo "deb http://download.mono-project.com/repo/debian wheezy/snapshots 4.6.
   && echo "deb http://download.mono-project.com/repo/debian wheezy-apache24-compat main" | tee -a /etc/apt/sources.list.d/mono-xamarin.list \
   && echo "deb http://download.mono-project.com/repo/debian wheezy-libjpeg62-compat main" | tee -a /etc/apt/sources.list.d/mono-xamarin.list \
   && apt-get update \
-  && apt-get install -y binutils mono-complete ca-certificates-mono fsharp
+  && apt-get install -y --force-yes binutils mono-complete ca-certificates-mono fsharp
 
 RUN wget -O /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg && \
     echo "deb https://packages.sury.org/php/ jessie main" > /etc/apt/sources.list.d/php.list
