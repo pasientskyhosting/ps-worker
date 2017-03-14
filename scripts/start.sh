@@ -57,6 +57,10 @@ if [ ! -d "/data/.git" ]; then
     fi
 fi
 
+if [ -f /data/app/config/parameters.yml.dist ]; then
+    echo -e "\tk8s_build_id: $PS_BUILD_ID" >> /data/app/config/parameters.yml.dist
+fi
+
 # Composer
 if [ -f /data/composer.json ];
 then
@@ -89,10 +93,6 @@ fi
 
     cd /data
     /usr/bin/composer install --no-interaction --no-dev --optimize-autoloader
-fi
-
-if [ -f /data/app/config/parameters.yml.dist ]; then
-    echo "k8s_build_id: $PS_BUILD_ID" >> /data/app/config/parameters.yml.dist
 fi
 
 # Create workers in supervisord
