@@ -58,7 +58,7 @@ if [ ! -d "/data/.git" ]; then
 fi
 
 if [ -f /data/app/config/parameters.yml.dist ]; then
-    echo -e "\tk8s_build_id: $PS_BUILD_ID" >> /data/app/config/parameters.yml.dist
+    echo "    k8s_build_id: $PS_BUILD_ID" >> /data/app/config/parameters.yml.dist
 fi
 
 # Composer
