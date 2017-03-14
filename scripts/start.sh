@@ -25,19 +25,6 @@ else
     /etc/init.d/newrelic-daemon stop
 fi
 
-# Set custom webroot
-if [ ! -z "$WEBROOT" ]; then
-    webroot=$WEBROOT
-    sed -i "s#root /data/web;#root ${webroot};#g" /etc/nginx/sites-available/default.conf
-else
-    webroot=/data
-fi
-
-# Set custom server name
-if [ ! -z "$SERVERNAME" ]; then
-    sed -i "s#server_name _;#server_name $SERVERNAME;#g" /etc/nginx/sites-available/default.conf
-fi
-
 # Setup git variables
 if [ ! -z "$GIT_EMAIL" ]; then
     git config --global user.email "$GIT_EMAIL"
@@ -68,6 +55,10 @@ if [ ! -d "/data/.git" ]; then
             fi
         fi
     fi
+fi
+
+if [ -f /data/app/config/parameters.yml ]; then
+    sed -i "s/{{build_id}}/$PS_BUILD_ID/" /data/app/config/parameters.yml
 fi
 
 # Composer
