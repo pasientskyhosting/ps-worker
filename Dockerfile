@@ -53,8 +53,12 @@ RUN apt-get update \
     newrelic-php5 \
     newrelic-sysmond \
     git \
+    librabbitmq-dev \
+    make \
+    php-pear \
     && apt-get clean \
-    && rm -rf /var/lib/apt/lists/* /tmp/*
+    && rm -rf /var/lib/apt/lists/* /tmp/* \
+    && yes '' | pecl install amqp
 
 RUN mkdir -p /var/log/supervisor
 
@@ -92,6 +96,11 @@ RUN echo "opcache.enable=1" >> /etc/php/7.1/cli/conf.d/10-opcache.ini && \
 # Add Scripts
 ADD scripts/start.sh /start.sh
 RUN chmod 755 /start.sh
+
+# tweak php-cli and php-fpm config
+RUN sed -i \
+        -e "s/memory_limit\s*=.*/memory_limit=6G/g" \
+        /etc/php/7.1/cli/php.ini
 
 RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && \
     php -r "if (hash_file('SHA384', 'composer-setup.php') === '${composer_hash}') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;" && \
