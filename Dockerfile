@@ -93,7 +93,6 @@ RUN echo "opcache.enable=1" >> /etc/php/7.1/cli/conf.d/10-opcache.ini && \
     echo "opcache.memory_consumption=1024" >> /etc/php/7.1/cli/conf.d/10-opcache.ini && \
     echo "opcache.interned_strings_buffer=8" >> /etc/php/7.1/cli/conf.d/10-opcache.ini && \
     echo "opcache.revalidate_freq=60" >> /etc/php/7.1/cli/conf.d/10-opcache.ini && \
-    echo "extension=amqp.so" >> /etc/php/7.1/fpm/php.ini && \
     echo "extension=amqp.so" >> /etc/php/7.1/cli/php.ini
 
 # Add Scripts
