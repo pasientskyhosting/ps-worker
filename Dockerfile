@@ -56,6 +56,7 @@ RUN apt-get update \
     librabbitmq-dev \
     make \
     php-pear \
+    php7.1-dev \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* \
     && yes '' | pecl install amqp
@@ -91,7 +92,9 @@ RUN echo "opcache.enable=1" >> /etc/php/7.1/cli/conf.d/10-opcache.ini && \
     echo "opcache.max_accelerated_files=1000000" >> /etc/php/7.1/cli/conf.d/10-opcache.ini && \
     echo "opcache.memory_consumption=1024" >> /etc/php/7.1/cli/conf.d/10-opcache.ini && \
     echo "opcache.interned_strings_buffer=8" >> /etc/php/7.1/cli/conf.d/10-opcache.ini && \
-    echo "opcache.revalidate_freq=60" >> /etc/php/7.1/cli/conf.d/10-opcache.ini
+    echo "opcache.revalidate_freq=60" >> /etc/php/7.1/cli/conf.d/10-opcache.ini && \
+    echo "extension=amqp.so" >> /etc/php/7.1/fpm/php.ini && \
+    echo "extension=amqp.so" >> /etc/php/7.1/cli/php.ini
 
 # Add Scripts
 ADD scripts/start.sh /start.sh
@@ -102,7 +105,8 @@ RUN sed -i \
         -e "s/memory_limit\s*=.*/memory_limit=6G/g" \
         /etc/php/7.1/cli/php.ini
 
-RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && \
+RUN composer_hash=$(wget -q -O - https://composer.github.io/installer.sig) && \
+    php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && \
     php -r "if (hash_file('SHA384', 'composer-setup.php') === '${composer_hash}') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;" && \
     php composer-setup.php --install-dir=/usr/bin --filename=composer && \
     php -r "unlink('composer-setup.php');"
