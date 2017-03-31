@@ -101,7 +101,7 @@ RUN chmod 755 /start.sh
 
 # tweak php-cli and php-fpm config
 RUN sed -i \
-        -e "s/memory_limit\s*=.*/memory_limit=6G/g" \
+        -e "s/memory_limit\s*=.*/memory_limit=12G/g" \
         /etc/php/7.1/cli/php.ini
 
 RUN composer_hash=$(wget -q -O - https://composer.github.io/installer.sig) && \
