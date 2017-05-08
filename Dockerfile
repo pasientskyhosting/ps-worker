@@ -48,6 +48,7 @@ RUN apt-get update \
     php7.1-xml \
     php7.1-zip \
     php-igbinary \
+    net-tools \
     supervisor \
     openssh-client \
     newrelic-php5 \
