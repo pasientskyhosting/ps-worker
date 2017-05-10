@@ -11,6 +11,7 @@ RUN apt-get update \
     apt-transport-https \
     lsb-release \
     wget \
+    tzdata \
     curl \
     apt-utils \
     ca-certificates
