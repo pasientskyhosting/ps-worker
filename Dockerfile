@@ -18,7 +18,7 @@ RUN apt-get update \
 
 RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
 
-RUN echo "deb http://download.mono-project.com/repo/debian wheezy/snapshots 4.6.2/main" > /etc/apt/sources.list.d/mono-xamarin.list \
+RUN echo "deb http://download.mono-project.com/repo/debian wheezy/snapshots 4.8.1/main" > /etc/apt/sources.list.d/mono-xamarin.list \
   && echo "deb http://download.mono-project.com/repo/debian wheezy-apache24-compat main" | tee -a /etc/apt/sources.list.d/mono-xamarin.list \
   && echo "deb http://download.mono-project.com/repo/debian wheezy-libjpeg62-compat main" | tee -a /etc/apt/sources.list.d/mono-xamarin.list \
   && apt-get update \
@@ -49,6 +49,7 @@ RUN apt-get update \
     php7.1-xml \
     php7.1-zip \
     php-igbinary \
+    net-tools \
     supervisor \
     openssh-client \
     newrelic-php5 \
@@ -89,6 +90,9 @@ RUN find /etc/php/7.1/cli/conf.d -name "*.ini" -exec sed -i -re '/^[[:blank:]]*(
 # Configure php opcode cache
 RUN echo "opcache.enable=1" >> /etc/php/7.1/cli/conf.d/10-opcache.ini && \
     echo "opcache.enable_cli=1" >> /etc/php/7.1/cli/conf.d/10-opcache.ini && \
+    echo "opcache.consistency_checks=0" >> /etc/php/7.1/cli/conf.d/10-opcache.ini && \
+    echo "opcache.file_cache_consistency_checks=0" >> /etc/php/7.1/cli/conf.d/10-opcache.ini && \
+    echo "opcache.file_cache=/var/tmp" >> /etc/php/7.1/cli/conf.d/10-opcache.ini && \
     echo "opcache.validate_timestamps=0" >> /etc/php/7.1/cli/conf.d/10-opcache.ini && \
     echo "opcache.max_accelerated_files=1000000" >> /etc/php/7.1/cli/conf.d/10-opcache.ini && \
     echo "opcache.memory_consumption=1024" >> /etc/php/7.1/cli/conf.d/10-opcache.ini && \
@@ -102,7 +106,7 @@ RUN chmod 755 /start.sh
 
 # tweak php-cli and php-fpm config
 RUN sed -i \
-        -e "s/memory_limit\s*=.*/memory_limit=6G/g" \
+        -e "s/memory_limit\s*=.*/memory_limit=12G/g" \
         /etc/php/7.1/cli/php.ini
 
 RUN composer_hash=$(wget -q -O - https://composer.github.io/installer.sig) && \
