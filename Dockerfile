@@ -104,6 +104,8 @@ RUN echo "opcache.enable=1" >> /etc/php/7.1/cli/conf.d/10-opcache.ini && \
 ADD scripts/start.sh /start.sh
 RUN chmod 755 /start.sh
 
+ENV MONO_GC_PARAMS="nursery-size=32M"
+
 # tweak php-cli and php-fpm config
 RUN sed -i \
         -e "s/memory_limit\s*=.*/memory_limit=12G/g" \
