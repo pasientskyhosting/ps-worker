@@ -148,4 +148,4 @@ php app/console melin:clientmessaging:newdeployment -e prod
 php app/console melin:cloudinary:upload -e prod
 
 # Start supervisord and services
-/usr/bin/supervisord -n -c /etc/supervisord.conf
+exec /usr/bin/supervisord -n -c /etc/supervisord.conf
