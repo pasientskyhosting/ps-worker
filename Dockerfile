@@ -1,5 +1,4 @@
 FROM debian:buster-slim
-
 LABEL maintainer "Andreas Krüger <ak@patientsky.com>"
 ENV MONO_GC_PARAMS="nursery-size=32M"
 
@@ -15,20 +14,15 @@ RUN apt-get update && \
       curl \
       apt-utils \
       net-tools \
-      supervisor \
-      openssh-client \
-      git \
       ca-certificates \
-    && mkdir -p /var/log/supervisor \
-    && rm -rf /var/lib/apt/lists/* \
-    && rm -rf /var/cache/apk/*
+    && rm -rf /var/lib/apt/lists/*
+
+COPY --from=pasientskyhosting/ps-mono:6.0-jemalloc /opt/mono /usr/local
 
 RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF \
-    && echo "deb https://download.mono-project.com/repo/debian stable-buster/snapshots/6.0.0 main" > /etc/apt/sources.list.d/mono-official-stable.list \
+    && echo "deb https://download.mono-project.com/repo/debian stable-buster/snapshots/6.0 main" > /etc/apt/sources.list.d/mono-official-stable.list \
     && apt-get update \
-    && apt-get install -y --force-yes binutils mono-complete ca-certificates-mono fsharp
+    && apt-get install -y -q --install-recommends --no-install-suggests ca-certificates-mono \
+    && rm -rf /var/lib/apt/lists/*
 
-COPY conf/supervisord.conf /etc/supervisord.conf
-COPY scripts/start.sh /start.sh
-
-CMD ["/start.sh"]
+CMD ["/bin/bash"]
