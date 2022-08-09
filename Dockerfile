@@ -1,4 +1,4 @@
-FROM debian:buster-slim
+FROM debian:10.12-slim
 
 LABEL maintainer "Andreas Krüger <ak@patientsky.com>"
 ENV MONO_GC_PARAMS="nursery-size=32M"
